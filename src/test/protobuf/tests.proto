@@ -1,0 +1,37 @@
+syntax = "proto2";
+
+package io.findify.flinkprotobuf.java;
+
+import "scalapb/scalapb.proto";
+
+option (scalapb.options) = {
+  scope: FILE
+  package_name: "io.findify.flinkprotobuf.scala"
+  flat_package: true
+  single_file: true
+  no_default_values_in_constructor: true
+  preserve_unknown_fields: false
+};
+
+
+message Root {
+    message Nested {
+        required int32 value = 1;
+    }
+    repeated Nested list = 1;
+}
+
+message Foo {
+    required int32 value = 1;
+}
+
+message Bar {
+    required string value = 1;
+}
+
+message Sealed {
+    oneof sealed_value_optional {
+        Foo foo = 1;
+        Bar bar = 2;
+    }
+}
