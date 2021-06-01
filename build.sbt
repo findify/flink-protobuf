@@ -5,7 +5,7 @@ version := "0.2"
 scalaVersion := "2.12.14"
 
 lazy val scalapbVersion = "0.11.3"
-lazy val flinkVersion   = "1.13.0"
+lazy val flinkVersion   = "1.13.1"
 
 libraryDependencies ++= Seq(
   "com.thesamet.scalapb" %% "scalapb-runtime"       % scalapbVersion % "protobuf,test,compile",
