@@ -9,8 +9,6 @@ import org.apache.flink.core.memory.{DataInputView, DataOutputView}
 import org.apache.flink.util.InstantiationUtil
 import scalapb.{GeneratedMessage, GeneratedMessageCompanion}
 
-import scala.reflect.ClassTag
-
 case class ProtobufSerializer[T](codec: Codec[T]) extends TypeSerializer[T] {
 
   override def isImmutableType: Boolean       = true
@@ -54,7 +52,7 @@ object ProtobufSerializer {
     override def readSnapshot(readVersion: Int, in: DataInputView, userCodeClassLoader: ClassLoader): Unit = {
       codec = ScalaCodec(
         companion = InstantiationUtil
-          .resolveClassByName[GeneratedMessageCompanion[T with GeneratedMessage]](in, userCodeClassLoader)
+          .resolveClassByName[GeneratedMessageCompanion[T]](in, userCodeClassLoader)
           .getField("MODULE$")
           .get(null)
           .asInstanceOf[GeneratedMessageCompanion[T]],
@@ -83,18 +81,14 @@ object ProtobufSerializer {
     override def getCurrentVersion: Int = 1
 
     override def readSnapshot(readVersion: Int, in: DataInputView, userCodeClassLoader: ClassLoader): Unit = {
-      codec = JavaCodec(
-        parser = InstantiationUtil
-          .resolveClassByName[Parser[T]](in, userCodeClassLoader)
-          .getDeclaredConstructor()
-          .newInstance(),
-        clazz = InstantiationUtil.resolveClassByName[T](in, userCodeClassLoader)
-      )
+      val clazz       = InstantiationUtil.resolveClassByName[T](in, userCodeClassLoader)
+      val constructor = clazz.getDeclaredConstructor()
+      constructor.setAccessible(true)
+      codec = JavaCodec(constructor.newInstance(), clazz)
     }
 
     override def writeSnapshot(out: DataOutputView): Unit = {
       out.writeUTF(codec.clazz.getName)
-      out.writeUTF(codec.parser.getClass.getName)
     }
 
     override def restoreSerializer(): TypeSerializer[T] = new ProtobufSerializer[T](codec)

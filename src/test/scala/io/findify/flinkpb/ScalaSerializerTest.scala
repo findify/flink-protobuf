@@ -29,6 +29,7 @@ class ScalaSerializerTest extends AnyFlatSpec with Matchers with SerializerTest 
     roundtrip[SealedMessage](ser, Foo(1).asMessage)
     roundtrip[SealedMessage](ser, Bar("a").asMessage)
     serializable(ser)
+    snapshotSerializable(ser)
   }
 
 }

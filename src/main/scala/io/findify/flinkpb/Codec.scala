@@ -21,10 +21,9 @@ object Codec {
     override def writeTo(out: OutputStream, value: T): Unit = value.writeDelimitedTo(out)
   }
 
-  case class JavaCodec[T <: GeneratedMessageV3](parser: Parser[T], clazz: Class[T]) extends Codec[T] {
-    lazy val default                                        = clazz.getMethod("")
-    override def defaultInstance: T                         = ???
-    override def parseFrom(in: InputStream): T              = parser.parseDelimitedFrom(in)
+  case class JavaCodec[T <: GeneratedMessageV3](singleton: T, clazz: Class[T]) extends Codec[T] {
+    override def defaultInstance: T                         = singleton.getDefaultInstanceForType.asInstanceOf[T]
+    override def parseFrom(in: InputStream): T              = singleton.getParserForType.parseDelimitedFrom(in).asInstanceOf[T]
     override def writeTo(out: OutputStream, value: T): Unit = value.writeDelimitedTo(out)
   }
 }

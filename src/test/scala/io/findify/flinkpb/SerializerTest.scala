@@ -19,7 +19,22 @@ trait SerializerTest { this: Suite with Matchers =>
 
   def serializable[T](ti: TypeInformation[T]) = {
     val stream = new ObjectOutputStream(new ByteArrayOutputStream())
-    stream.writeObject(ti.createSerializer(new ExecutionConfig()))
+    val ser    = ti.createSerializer(new ExecutionConfig())
+    stream.writeObject(ser)
+  }
+
+  def snapshotSerializable[T](ti: TypeInformation[T]) = {
+    val buffer     = new ByteArrayOutputStream()
+    val serializer = ti.createSerializer(new ExecutionConfig())
+    val conf       = serializer.snapshotConfiguration()
+    conf.writeSnapshot(new DataOutputViewStreamWrapper(buffer))
+    conf.readSnapshot(
+      1,
+      new DataInputViewStreamWrapper(new ByteArrayInputStream(buffer.toByteArray)),
+      this.getClass.getClassLoader
+    )
+    val restored = conf.restoreSerializer()
+    restored shouldBe serializer
   }
 
 }

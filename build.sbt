@@ -8,10 +8,12 @@ lazy val scalapbVersion = "0.11.3"
 lazy val flinkVersion   = "1.13.0"
 
 libraryDependencies ++= Seq(
-  "com.thesamet.scalapb" %% "scalapb-runtime" % scalapbVersion % "protobuf,test,compile,provided",
-  "com.google.protobuf"   % "protobuf-java"   % "3.17.1"       % "protobuf,test,compile",
-  "org.apache.flink"     %% "flink-scala"     % flinkVersion   % "provided",
-  "org.scalatest"        %% "scalatest"       % "3.2.9"        % "test"
+  "com.thesamet.scalapb" %% "scalapb-runtime"       % scalapbVersion % "protobuf,test,compile",
+  "com.google.protobuf"   % "protobuf-java"         % "3.17.1"       % "protobuf,test,compile",
+  "org.apache.flink"     %% "flink-scala"           % flinkVersion   % "provided",
+  "org.apache.flink"     %% "flink-streaming-scala" % flinkVersion   % "provided",
+  "org.apache.flink"     %% "flink-test-utils"      % flinkVersion   % "test",
+  "org.scalatest"        %% "scalatest"             % "3.2.9"        % "test"
 )
 
 Test / PB.targets := Seq(
