@@ -17,7 +17,7 @@ This project can be useful if you have:
 
 `flink-protobuf` is released to Maven-central. For SBT, add this snippet to `build.sbt`:
 ```scala
-libraryDependencies += "io.findify" %% "flink-protobuf" % "0.2"
+libraryDependencies += "io.findify" %% "flink-protobuf" % "0.3"
 ```
 Then, given that you have a following message format:
 ```proto
@@ -57,6 +57,7 @@ message Bar1 {
 }
 
 message SealedOptional {
+    // optional one!
     oneof sealed_value_optional {
         Foo1 foo = 1;
         Bar1 bar = 2;
@@ -65,7 +66,7 @@ message SealedOptional {
 ```
 You can generate the following typeinfo:
 ```scala
-implicit val ti = FlinkProtobuf.generateScalaOptionalOneof(Foo)
+implicit val ti = FlinkProtobuf.generateScalaOptionalOneof[SealedOptional,SealedOptionalMessage](SealedOptionalMessage)
 val result      = env.fromCollection(List(Foo1(1), Foo1(2), Foo1(3)))
 ```
 
@@ -79,6 +80,7 @@ message Bar2 {
     required string value = 1;
 }
 message SealedNonOpt {
+    // non-optional one!
     oneof sealed_value {
         Foo2 foo = 1;
         Bar2 bar = 2;
@@ -87,7 +89,7 @@ message SealedNonOpt {
 ```
 with the following typeinfo:
 ```scala
-implicit val ti = FlinkProtobuf.generateScalaOneof(Foo)
+implicit val ti = FlinkProtobuf.generateScalaOptionalOneof[SealedNonOpt, SealedNonOptMessage](SealedNonOpt)
 val result      = env.fromCollection(List(Foo2(1), Foo2(2), Foo2(3)))
 ```
 
