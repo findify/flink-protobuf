@@ -1,7 +1,7 @@
 package io.findify.flinkpb
 
 import com.google.protobuf.{GeneratedMessageV3, Parser}
-import scalapb.{GeneratedMessage, GeneratedMessageCompanion}
+import scalapb.{GeneratedMessage, GeneratedMessageCompanion, TypeMapper}
 
 import java.io.{DataOutputStream, InputStream, OutputStream}
 
@@ -13,6 +13,41 @@ sealed trait Codec[T] {
 }
 
 object Codec {
+  case class ScalaOptionalOneofCodec[T, M <: GeneratedMessage](
+      mapper: TypeMapper[M, Option[T]],
+      companion: GeneratedMessageCompanion[M],
+      clazz: Class[T]
+  ) extends Codec[T] {
+    override def defaultInstance: T = mapper
+      .toCustom(companion.defaultInstance)
+      .getOrElse(throw new IllegalArgumentException("cannot decode empty message"))
+    override def parseFrom(in: InputStream): T = {
+      val message =
+        companion.parseDelimitedFrom(in).getOrElse(throw new IllegalArgumentException("cannot parse message"))
+      mapper.toCustom(message).getOrElse(throw new IllegalArgumentException("cannot decode empty message"))
+    }
+
+    override def writeTo(out: OutputStream, value: T): Unit = {
+      mapper.toBase(Some(value)).writeDelimitedTo(out)
+    }
+  }
+  case class ScalaOneofCodec[T, M <: GeneratedMessage](
+      mapper: TypeMapper[M, T],
+      companion: GeneratedMessageCompanion[M],
+      clazz: Class[T]
+  ) extends Codec[T] {
+    override def defaultInstance: T = mapper.toCustom(companion.defaultInstance)
+    override def parseFrom(in: InputStream): T = {
+      val message =
+        companion.parseDelimitedFrom(in).getOrElse(throw new IllegalArgumentException("cannot parse message"))
+      mapper.toCustom(message)
+    }
+
+    override def writeTo(out: OutputStream, value: T): Unit = {
+      mapper.toBase(value).writeDelimitedTo(out)
+    }
+  }
+
   case class ScalaCodec[T <: GeneratedMessage](companion: GeneratedMessageCompanion[T], clazz: Class[T])
       extends Codec[T] {
     override def defaultInstance: T = companion.defaultInstance
