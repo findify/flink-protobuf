@@ -4,8 +4,6 @@ version := "0.2"
 
 scalaVersion := "2.12.14"
 
-crossScalaVersions := List("2.12.14", "2.11.11")
-
 lazy val scalapbVersion = "0.11.3"
 lazy val flinkVersion   = "1.13.0"
 

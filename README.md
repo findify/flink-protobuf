@@ -4,10 +4,14 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.findify/flink-adt_2.12/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor_2.13)
 [![License: Apache 2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache2.0)
 
-This project is an adapter to connect Google Protobuf to the flink's own `TypeInformation`-based serialization 
-framework. This project can be useful if you have:
-* oneof-encoded protobuf messages, which cannot be efficiently encoded using flink's serialization without Kryo fallback
-* stronger requirements on schema evolution (as compared to Flinks' for POJOs and Scala case classes)
+This project is an adapter to connect [Google Protobuf](https://developers.google.com/protocol-buffers) to the flink's 
+own `TypeInformation`-based [serialization framework](https://flink.apache.org/news/2020/04/15/flink-serialization-tuning-vol-1.html). 
+This project can be useful if you have:
+* [oneof-encoded](https://developers.google.com/protocol-buffers/docs/proto#oneof) protobuf messages, 
+  which cannot be efficiently encoded using flink's serialization without Kryo fallback.
+* flexible requirements on schema evolution for POJO classes (as compared to 
+  [Flinks' for POJOs and Scala case classes](https://ci.apache.org/projects/flink/flink-docs-master/docs/dev/datastream/fault-tolerance/schema_evolution/))
+* schema evolution support is needed for scala case classes (as Flink lacks it out of the box)
 
 ## Usage
 
@@ -40,9 +44,20 @@ env.fromCollection(List.of(Tests.Foo.newBuilder().setValue(1).build()), ti).exec
 
 ```
 
+## Schema evolution
+
+Compared to Flink schema evolution for POJO classes, with `flink-protobuf` you can do much more:
+* fields can be renamed (as protobuf uses an index-based encoding for field names)
+* types can be changed (so optional field can be made repeated, or int32 can be upcasted to int64)
+
+For Scala case classes Flink has no support for schema evolution, so with this project you can:
+* add, rename, remove fields
+* change field types
+
 ## Compatibility
 
-The library is built over Flink 1.13 for both Scala 2.11 and 2.12, but should be binary compatible with older flink versions.
+The library is built over Flink 1.13 for Scala 2.12, but should be binary compatible with older flink versions.
+Scala 2.11 version is not planned, as ScalaPB already dropped it's support.
 
 ## License
 
