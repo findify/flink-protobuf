@@ -1,15 +1,23 @@
 package io.findify.flinkpb
 
+import io.findify.flinkprotobuf.scala.NonSealedOneof.Whatever.Xfoo
 import io.findify.flinkprotobuf.scala.Root.Nested
-import io.findify.flinkprotobuf.scala.{Bar, Foo, Root, Sealed, SealedMessage}
-import org.apache.flink.api.common.ExecutionConfig
-import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.api.common.typeutils.TypeSerializer
-import org.apache.flink.core.memory.{DataInputViewStreamWrapper, DataOutputViewStreamWrapper}
+import io.findify.flinkprotobuf.scala.{
+  Bar,
+  Bar1,
+  Bar2,
+  Foo,
+  Foo1,
+  Foo2,
+  NonSealedOneof,
+  Root,
+  SealedNonOpt,
+  SealedNonOptMessage,
+  SealedOptional,
+  SealedOptionalMessage
+}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 class ScalaSerializerTest extends AnyFlatSpec with Matchers with SerializerTest {
   it should "write simple scala types" in {
@@ -24,10 +32,33 @@ class ScalaSerializerTest extends AnyFlatSpec with Matchers with SerializerTest 
     serializable(ser)
   }
 
-  it should "write oneof messages" in {
-    val ser = FlinkProtobuf.generateScala(SealedMessage)
-    roundtrip[SealedMessage](ser, Foo(1).asMessage)
-    roundtrip[SealedMessage](ser, Bar("a").asMessage)
+  it should "write sealed optional oneof messages" in {
+    val ser = FlinkProtobuf.generateScala(SealedOptionalMessage)
+    roundtrip[SealedOptionalMessage](ser, Foo1(1).asMessage)
+    roundtrip[SealedOptionalMessage](ser, Bar1("a").asMessage)
+    serializable(ser)
+    snapshotSerializable(ser)
+  }
+
+  it should "write sealed optional oneof messages via generateScalaOneof" in {
+    val ser =
+      FlinkProtobuf.generateScalaOptionalOneof[SealedOptional, SealedOptionalMessage](SealedOptionalMessage)
+    roundtrip(ser, Foo1(1))
+    roundtrip(ser, Bar1("a"))
+    serializable(ser)
+    snapshotSerializable(ser)
+  }
+
+  it should "write sealed nonopt oneof messages" in {
+    val ser = FlinkProtobuf.generateScalaOneof[SealedNonOpt, SealedNonOptMessage](SealedNonOptMessage)
+    roundtrip[SealedNonOpt](ser, Bar2("a"))
+    serializable(ser)
+    snapshotSerializable(ser)
+  }
+
+  it should "write nonsealed oneof messages" in {
+    val ser = FlinkProtobuf.generateScala(NonSealedOneof)
+    roundtrip[NonSealedOneof](ser, NonSealedOneof.of(Xfoo(Foo2(1))))
     serializable(ser)
     snapshotSerializable(ser)
   }
