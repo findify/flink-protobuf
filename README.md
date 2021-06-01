@@ -1,7 +1,7 @@
 # Protobuf serialization support for Apache Flink
 
 [![CI Status](https://github.com/findify/flink-protobuf/workflows/CI/badge.svg)](https://github.com/flink-protobuf/workflows/actions)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.findify/flink-adt_2.12/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor_2.13)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.findify/flink-protobuf_2.12/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.findify/flink-protobuf_2.12)
 [![License: Apache 2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache2.0)
 
 This project is an adapter to connect [Google Protobuf](https://developers.google.com/protocol-buffers) to the flink's 
