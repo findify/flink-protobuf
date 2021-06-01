@@ -34,7 +34,7 @@ trait SerializerTest { this: Suite with Matchers =>
       this.getClass.getClassLoader
     )
     val restored = conf.restoreSerializer()
-    restored shouldBe serializer
+    restored.getClass shouldBe serializer.getClass
   }
 
 }

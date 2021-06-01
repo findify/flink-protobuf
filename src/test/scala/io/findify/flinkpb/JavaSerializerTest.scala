@@ -22,8 +22,8 @@ class JavaSerializerTest extends AnyFlatSpec with Matchers with SerializerTest {
   }
 
   it should "write oneof messages" in {
-    val ser = FlinkProtobuf.generateJava(classOf[Sealed], Sealed.getDefaultInstance)
-    roundtrip(ser, Sealed.newBuilder().setFoo(Foo.newBuilder().setValue(1).build()).build())
+    val ser = FlinkProtobuf.generateJava(classOf[SealedOptional], SealedOptional.getDefaultInstance)
+    roundtrip(ser, SealedOptional.newBuilder().setFoo(Foo1.newBuilder().setValue(1).build()).build())
     serializable(ser)
     snapshotSerializable(ser)
   }

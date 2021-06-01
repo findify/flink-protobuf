@@ -1,6 +1,6 @@
 package io.findify.flinkpb
 
-import io.findify.flinkprotobuf.scala.{Bar, Foo, Sealed, SealedMessage}
+import io.findify.flinkprotobuf.scala.{Bar, Bar1, Foo, Foo1, SealedOptional, SealedOptionalMessage}
 import org.apache.flink.api.common.{ExecutionConfig, RuntimeExecutionMode}
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration
@@ -9,6 +9,7 @@ import org.apache.flink.test.util.MiniClusterWithClientResource
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+
 import scala.collection.JavaConverters._
 
 class FlinkJobTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
@@ -50,11 +51,12 @@ class FlinkJobTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
   }
 
   it should "use protobuf serialization for oneof messages" in {
-    implicit val ti = FlinkProtobuf.generateScala(SealedMessage)
+    implicit val ti =
+      FlinkProtobuf.generateScalaOptionalOneof[SealedOptional, SealedOptionalMessage](SealedOptionalMessage)
     val result = env
-      .fromCollection(List[SealedMessage](Foo(1).asMessage, Foo(2).asMessage, Foo(3).asMessage, Bar("a").asMessage))
+      .fromCollection(List[SealedOptional](Foo1(1), Foo1(2), Foo1(3), Bar1("a")))
       .rebalance
       .executeAndCollect(10)
-    result.flatMap(_.toSealed) shouldBe List(Foo(1), Foo(2), Foo(3), Bar("a"))
+    result shouldBe List(Foo1(1), Foo1(2), Foo1(3), Bar1("a"))
   }
 }

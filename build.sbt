@@ -1,19 +1,21 @@
 name := "flink-protobuf"
 
-version := "0.2"
+version := "0.3"
 
 scalaVersion := "2.12.14"
 
-lazy val scalapbVersion = "0.11.3"
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+lazy val scalapbVersion = "0.11.3+12-3a9f2017+20210601-1710-SNAPSHOT"
 lazy val flinkVersion   = "1.13.1"
 
 libraryDependencies ++= Seq(
-  "com.thesamet.scalapb" %% "scalapb-runtime"       % scalapbVersion % "protobuf,test,compile",
-  "com.google.protobuf"   % "protobuf-java"         % "3.17.1"       % "protobuf,test,compile",
-  "org.apache.flink"     %% "flink-scala"           % flinkVersion   % "provided",
-  "org.apache.flink"     %% "flink-streaming-scala" % flinkVersion   % "provided",
-  "org.apache.flink"     %% "flink-test-utils"      % flinkVersion   % "test",
-  "org.scalatest"        %% "scalatest"             % "3.2.9"        % "test"
+  "io.findify"         %% "scalapb-runtime"       % scalapbVersion % "protobuf,test,compile",
+  "com.google.protobuf" % "protobuf-java"         % "3.17.1"       % "protobuf,test,compile",
+  "org.apache.flink"   %% "flink-scala"           % flinkVersion   % "provided",
+  "org.apache.flink"   %% "flink-streaming-scala" % flinkVersion   % "provided",
+  "org.apache.flink"   %% "flink-test-utils"      % flinkVersion   % "test",
+  "org.scalatest"      %% "scalatest"             % "3.2.9"        % "test"
 )
 
 Test / PB.targets := Seq(

@@ -21,6 +21,7 @@ message Root {
     repeated Nested list = 1;
 }
 
+
 message Foo {
     required int32 value = 1;
 }
@@ -28,10 +29,46 @@ message Foo {
 message Bar {
     required string value = 1;
 }
+message Foo1 {
+    required int32 value = 1;
+}
 
-message Sealed {
+message Bar1 {
+    required string value = 1;
+}
+
+message SealedOptional {
     oneof sealed_value_optional {
-        Foo foo = 1;
-        Bar bar = 2;
+        Foo1 foo = 1;
+        Bar1 bar = 2;
+    }
+}
+
+message Foo2 {
+    required int32 value = 1;
+}
+
+message Bar2 {
+    required string value = 1;
+}
+message SealedNonOpt {
+    oneof sealed_value {
+        Foo2 foo = 1;
+        Bar2 bar = 2;
+    }
+}
+
+message Foo3 {
+    required int32 value = 1;
+}
+
+message Bar3 {
+    required string value = 1;
+}
+
+message NonSealedOneof {
+    oneof whatever {
+        Foo2 xfoo = 1;
+        Bar2 xbar = 2;
     }
 }
